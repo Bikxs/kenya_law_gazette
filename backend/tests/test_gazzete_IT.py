@@ -1,7 +1,7 @@
 import unittest
 import requests
 
-URL = "https://akjbox4ecc.execute-api.us-east-1.amazonaws.com/Stage"
+URL = "https://icfb7s3gub.execute-api.us-east-1.amazonaws.com/Stage"
 
 
 class GazetteTestsIT(unittest.TestCase):

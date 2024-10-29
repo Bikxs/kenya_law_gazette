@@ -7,5 +7,5 @@ s3_prefix = "kenya-law-gazettes"
 region = "us-east-1"
 confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
-disable_rollback = false
+disable_rollback = true
 image_repositories = []
