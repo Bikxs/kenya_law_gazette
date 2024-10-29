@@ -29,7 +29,7 @@ def download_gazette(event, context):
         return {'statusCode': 400, 'body': 'Title is required'}
     print(f"Downloading gazette {title} for {year}")
     try:
-        download_gazette_service(link,link, title)
+        download_gazette_service(link=link,year=year, title=title)
     except Exception as e:
         print(f"Error downloading {title}: {e}")
         return {'statusCode': 500, 'body': f'Unexpected error: {str(e)}'}

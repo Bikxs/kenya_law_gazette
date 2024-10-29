@@ -18,7 +18,7 @@ QUEUE_ARN = os.environ.get('PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_ARN')
 
 def list_gazettes(year):
     url = f"https://new.kenyalaw.org/gazettes/{year}"
-    print(f"Hitting URL: {url}")
+    # print(f"Hitting URL: {url}")
     response = requests.get(url)
     if response.status_code == 200:
         print(f"Response status 200. Legnth = {len(response.content)}")
@@ -44,19 +44,20 @@ def gazette_is_downloaded(year, title, print_output=False):
     try:
         s3_client.head_object(Bucket=S3_BUCKET_NAME, Key=s3_key)
         if print_output:
-            print(f"\t Skipped {title}. Already exists in S3.")
+            print(f"Skipped {title}. Already exists in S3.")
         return True
     except ClientError as e:
         if e.response['Error']['Code'] == '404':
             pass
         else:
             if print_output:
-                print(f"\t Error checking S3 for {title}: {str(e)}")
+                print(f"Error checking S3 for {title}: {str(e)}")
         return False
 
 
 def queue_gazettes_download(year):
     gazettes = list_gazettes(year)
+    # gazettes = random.sample(gazettes, k=3)
     for title, link in gazettes:
         if gazette_is_downloaded(year, title, print_output=True):
             continue
@@ -85,9 +86,9 @@ def download_gazette(link, year, title):
     if response.status_code == 200:
         try:
             s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=s3_key, Body=response.content)
-            print(f"\t Downloaded {title} to S3://{S3_BUCKET_NAME}/{s3_key}")
+            print(f"Downloaded {title} to S3://{S3_BUCKET_NAME}/{s3_key}")
             return s3_key
         except ClientError as e:
-            print(f"\t Failed to upload {title} to S3: {str(e)}")
+            print(f"Failed to upload {title} to S3: {str(e)}")
     else:
-        print(f"\t Failed to download {title}. Status code: {response.status_code}")
+        print(f"Failed to download {title}. Status code: {response.status_code}")

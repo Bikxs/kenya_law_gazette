@@ -3,7 +3,7 @@ import unittest
 from backend.src.gazzete_service import list_gazettes
 
 
-class GazetteServiceTests(unittest.TestCase):
+class GazetteTests(unittest.TestCase):
 
     def test_get_list_2020(self):
         gazettes = list_gazettes(2020)
