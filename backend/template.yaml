@@ -29,7 +29,7 @@ Resources:
         - ResourceName: DownloadGazettesFunction
       CodeUri: /lambda
       Handler: app.download
-      Runtime: python3.12
+      Runtime: python3.10
       MemorySize: 3008
       Timeout: 30
       Tracing: Active
