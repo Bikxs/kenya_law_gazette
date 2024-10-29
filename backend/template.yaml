@@ -43,14 +43,11 @@ Resources:
             RestApiId: !Ref Api
       Environment:
         Variables:
-          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_NAME: '!GetAtt PendingGazettesDownloadQueue.QueueName'
-          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_ARN: '!GetAtt PendingGazettesDownloadQueue.Arn'
-          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_URL: '!Ref PendingGazettesDownloadQueue'
           GAZETTESBUCKET_BUCKET_NAME: !Ref GazettesBucket
           GAZETTESBUCKET_BUCKET_ARN: !GetAtt GazettesBucket.Arn
-          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_NAME_2: !GetAtt PendingGazettesDownloadQueue.QueueName
-          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_ARN_2: !GetAtt PendingGazettesDownloadQueue.Arn
-          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_URL_2: !Ref PendingGazettesDownloadQueue
+          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_NAME: !GetAtt PendingGazettesDownloadQueue.QueueName
+          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_ARN: !GetAtt PendingGazettesDownloadQueue.Arn
+          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_URL: !Ref PendingGazettesDownloadQueue
       Policies:
         - SQSSendMessagePolicy:
             QueueName: !GetAtt PendingGazettesDownloadQueue.QueueName

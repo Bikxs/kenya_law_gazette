@@ -1,8 +1,9 @@
-from gazzete_service import queue_gazettes_download, download_gazette
-
+from gazzete_service import queue_gazettes_download, download_gazette as download_gazette_service 
+import json
 
 def queue_gazettes_downloads(event, context):
-    year = event['year']
+    # print(event)
+    year = json.loads(event['body'])['year']
     if not year:
         return {'statusCode': 400, 'body': 'Year is required'}
     print(f"Downloading year: {year}")
@@ -14,9 +15,12 @@ def queue_gazettes_downloads(event, context):
 
 
 def download_gazette(event, context):
-    year = event['year']
-    link = event['link']
-    title = event['title']
+    
+    # print(event)
+    payload = json.loads(event['Records'][0]['body'])
+    year = payload['year']
+    link = payload['link']
+    title = payload['title']
     if not year:
         return {'statusCode': 400, 'body': 'Year is required'}
     if not link:
@@ -25,7 +29,8 @@ def download_gazette(event, context):
         return {'statusCode': 400, 'body': 'Title is required'}
     print(f"Downloading gazette {title} for {year}")
     try:
-        download_gazette(link, year, title)
+        download_gazette_service(link,link, title)
     except Exception as e:
+        print(f"Error downloading {title}: {e}")
         return {'statusCode': 500, 'body': f'Unexpected error: {str(e)}'}
     return {'statusCode': 200, 'body': 'Gazette downloaded successfully'}

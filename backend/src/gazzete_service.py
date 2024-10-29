@@ -13,6 +13,7 @@ sqs_client = boto3.client('sqs')
 # S3 bucket name
 S3_BUCKET_NAME = os.environ.get('GAZETTESBUCKET_BUCKET_NAME')
 QUEUE_URL = os.environ.get('PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_URL')
+QUEUE_ARN = os.environ.get('PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_ARN')
 
 
 def list_gazettes(year):
