@@ -1,3 +1,4 @@
+Transform: AWS::Serverless-2016-10-31
 Resources:
   Api:
     Type: AWS::Serverless::Api
@@ -27,7 +28,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: DownloadGazettesFunction
-      CodeUri: /lambda
+      CodeUri: lambda
       Handler: app.download
       Runtime: python3.10
       MemorySize: 3008
@@ -105,4 +106,3 @@ Resources:
             Condition:
               Bool:
                 aws:SecureTransport: 'false'
-Transform: AWS::Serverless-2016-10-31
