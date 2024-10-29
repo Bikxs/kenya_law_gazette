@@ -14,27 +14,25 @@ S3_BUCKET_NAME = os.environ.get('GAZETTESBUCKET_BUCKET_NAME')
 
 def _list_gazettes(year):
     url = f"https://new.kenyalaw.org/gazettes/{year}"
-
-    def get_links_and_text():
-        response = requests.get(url)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            elements = soup.select('#doc-table')
-            results = []
-            for element in elements:
-                rows = element.find_all('tr')
-                for row in rows:
-                    cells = row.find_all('td')
-                    if cells:
-                        link = cells[0].find('a')['href']
-                        title = cells[0].text.strip()
-                        results.append((title, link))
-            return results
-        else:
-            print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
-            return []
-
-    return get_links_and_text()
+    print(f"Hitting URL: {url}")
+    response = requests.get(url)
+    if response.status_code == 200:
+        print(f"Response status 200. Legnth = {len(response.content)}")
+        soup = BeautifulSoup(response.content, 'html.parser')
+        elements = soup.select('#doc-table')
+        results = []
+        for element in elements:
+            rows = element.find_all('tr')
+            for row in rows:
+                cells = row.find_all('td')
+                if cells:
+                    link = cells[0].find('a')['href']
+                    title = cells[0].text.strip()
+                    results.append((title, link))
+        return results
+    else:
+        print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
+        return []
 
 
 def download_gazettes(year):
