@@ -27,7 +27,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: DownloadGazettesFunction
-      CodeUri: /../../backend/lambda/app
+      CodeUri: /lambda
       Handler: app.download
       Runtime: python3.12
       MemorySize: 3008
