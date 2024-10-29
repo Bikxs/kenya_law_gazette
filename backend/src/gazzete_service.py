@@ -1,15 +1,18 @@
 import os
 
 import boto3
+import json
 import requests
 from botocore.exceptions import ClientError
 from bs4 import BeautifulSoup
 
 # Initialize S3 client
 s3_client = boto3.client('s3')
+sqs_client = boto3.client('sqs')
 
 # S3 bucket name
 S3_BUCKET_NAME = os.environ.get('GAZETTESBUCKET_BUCKET_NAME')
+QUEUE_URL = os.environ.get('PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_URL')
 
 
 def list_gazettes(year):
@@ -35,10 +38,19 @@ def list_gazettes(year):
         return []
 
 
-def download_gazettes(year):
+def queue_gazettes_download(year):
     gazettes = list_gazettes(year)
     for title, link in gazettes:
-        download_gazette(link,year=year, title=title)
+        message = dict(link=link,year=year, title=title)
+        try:
+            # Send the message to the SQS queue
+            response = sqs_client.send_message(
+                QueueUrl=QUEUE_URL,
+                MessageBody=json.dumps(message)
+            )
+            print(f"Queued gazette {title}/{year} for download. Message ID: {response['MessageId']}")
+        except Exception as e:
+            print(f"Error queueing gazette download: {str(e)}")
 
 
 def download_gazette(link,year, title):

@@ -29,42 +29,11 @@ Resources:
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: DownloadGazettesFunction
       CodeUri: src
-      Handler: app.download
+      Handler: app.queue_gazettes_downloads
       Runtime: python3.10
       MemorySize: 256
       Timeout: 30
       Tracing: Active
-      Environment:
-        Variables:
-          GAZETTESBUCKET_BUCKET_NAME: !Ref GazettesBucket
-          GAZETTESBUCKET_BUCKET_ARN: !GetAtt GazettesBucket.Arn
-      Policies:
-        - Statement:
-            - Effect: Allow
-              Action:
-                - s3:GetObject
-                - s3:GetObjectAcl
-                - s3:GetObjectLegalHold
-                - s3:GetObjectRetention
-                - s3:GetObjectTorrent
-                - s3:GetObjectVersion
-                - s3:GetObjectVersionAcl
-                - s3:GetObjectVersionForReplication
-                - s3:GetObjectVersionTorrent
-                - s3:ListBucket
-                - s3:ListBucketMultipartUploads
-                - s3:ListBucketVersions
-                - s3:ListMultipartUploadParts
-                - s3:AbortMultipartUpload
-                - s3:DeleteObject
-                - s3:DeleteObjectVersion
-                - s3:PutObject
-                - s3:PutObjectLegalHold
-                - s3:PutObjectRetention
-                - s3:RestoreObject
-              Resource:
-                - !Sub arn:${AWS::Partition}:s3:::${GazettesBucket}
-                - !Sub arn:${AWS::Partition}:s3:::${GazettesBucket}/*
       Events:
         ApiPOSTreadgazettes:
           Type: Api
@@ -72,6 +41,14 @@ Resources:
             Path: /readgazettes
             Method: POST
             RestApiId: !Ref Api
+      Environment:
+        Variables:
+          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_NAME: !GetAtt PendingGazettesDownloadQueue.QueueName
+          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_ARN: !GetAtt PendingGazettesDownloadQueue.Arn
+          PENDINGGAZETTESDOWNLOADQUEUE_QUEUE_URL: !Ref PendingGazettesDownloadQueue
+      Policies:
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt PendingGazettesDownloadQueue.QueueName
   DownloadGazettesFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -106,3 +83,34 @@ Resources:
             Condition:
               Bool:
                 aws:SecureTransport: 'false'
+  PendingGazettesDownloadQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 345600
+  DownloadGazetteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: !Sub
+        - Stack ${AWS::StackName} Function ${ResourceName}
+        - ResourceName: DownloadGazetteFunction
+      CodeUri: src
+      Handler: app.download_gazette
+      Runtime: python3.10
+      MemorySize: 512
+      Timeout: 30
+      Tracing: Active
+      Environment:
+        Variables:
+          GAZETTESBUCKET_BUCKET_NAME: !Ref GazettesBucket
+          GAZETTESBUCKET_BUCKET_ARN: !GetAtt GazettesBucket.Arn
+      Events:
+        PendingGazettesDownloadQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt PendingGazettesDownloadQueue.Arn
+            BatchSize: 1
+  DownloadGazetteFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${DownloadGazetteFunction}
