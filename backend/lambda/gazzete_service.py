@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 s3_client = boto3.client('s3')
 
 # S3 bucket name
-S3_BUCKET_NAME = 'XXXXXXXXXXXXXXXXXXX'  # Replace with your actual S3 bucket name
+S3_BUCKET_NAME = os.environ.get('GAZETTESBUCKET_BUCKET_NAME')
 
 
 def _list_gazettes(year):
@@ -32,7 +32,7 @@ def _list_gazettes(year):
             return results
         else:
             print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
-            return None
+            return []
 
     return get_links_and_text()
 
@@ -40,10 +40,10 @@ def _list_gazettes(year):
 def download_gazettes(year):
     gazettes = _list_gazettes(year)
     for title, link in gazettes:
-        download_gazette(link, title=title, destination_folder=os.path.join(f"data", f"{year}"))
+        download_gazette(link,year=year, title=title)
 
 
-def download_gazette(link, title, year):
+def download_gazette(link,year, title):
     s3_key = f"{year}/{title}.pdf"
 
     # Check if the file already exists in S3

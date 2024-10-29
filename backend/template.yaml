@@ -31,7 +31,7 @@ Resources:
       CodeUri: lambda
       Handler: app.download
       Runtime: python3.10
-      MemorySize: 3008
+      MemorySize: 256
       Timeout: 30
       Tracing: Active
       Environment:
