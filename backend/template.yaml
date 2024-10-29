@@ -16,7 +16,7 @@ Resources:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DownloadGazettesFunction.Arn}/invocations
+                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:src:path/2015-03-31/functions/${DownloadGazettesFunction.Arn}/invocations
               responses: {}
       EndpointConfiguration: REGIONAL
       TracingEnabled: true
@@ -28,7 +28,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: DownloadGazettesFunction
-      CodeUri: lambda
+      CodeUri: src
       Handler: app.download
       Runtime: python3.10
       MemorySize: 256
@@ -76,7 +76,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
     Properties:
-      LogGroupName: !Sub /aws/lambda/${DownloadGazettesFunction}
+      LogGroupName: !Sub /aws/src/${DownloadGazettesFunction}
   GazettesBucket:
     Type: AWS::S3::Bucket
     Properties:

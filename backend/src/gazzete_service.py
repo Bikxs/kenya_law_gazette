@@ -12,7 +12,7 @@ s3_client = boto3.client('s3')
 S3_BUCKET_NAME = os.environ.get('GAZETTESBUCKET_BUCKET_NAME')
 
 
-def _list_gazettes(year):
+def list_gazettes(year):
     url = f"https://new.kenyalaw.org/gazettes/{year}"
     print(f"Hitting URL: {url}")
     response = requests.get(url)
@@ -24,7 +24,7 @@ def _list_gazettes(year):
         for element in elements:
             rows = element.find_all('tr')
             for row in rows:
-                cells = row.find_all('td')
+                cells = row.find_all('td',class_='cell-title')
                 if cells:
                     link = cells[0].find('a')['href']
                     title = cells[0].text.strip()
@@ -36,7 +36,7 @@ def _list_gazettes(year):
 
 
 def download_gazettes(year):
-    gazettes = _list_gazettes(year)
+    gazettes = list_gazettes(year)
     for title, link in gazettes:
         download_gazette(link,year=year, title=title)
 
