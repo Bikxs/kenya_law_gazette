@@ -1,7 +1,7 @@
+import json
 import os
 
 import boto3
-import json
 import requests
 from botocore.exceptions import ClientError
 from bs4 import BeautifulSoup
@@ -27,7 +27,7 @@ def list_gazettes(year):
         for element in elements:
             rows = element.find_all('tr')
             for row in rows:
-                cells = row.find_all('td',class_='cell-title')
+                cells = row.find_all('td', class_='cell-title')
                 if cells:
                     link = cells[0].find('a')['href']
                     title = cells[0].text.strip()
@@ -38,10 +38,28 @@ def list_gazettes(year):
         return []
 
 
+def gazette_is_downloaded(year, title, print_output=False):
+    s3_key = f"{year}/{title}.pdf"
+    try:
+        s3_client.head_object(Bucket=S3_BUCKET_NAME, Key=s3_key)
+        if print_output:
+            print(f"\t Skipped {title}. Already exists in S3.")
+        return True
+    except ClientError as e:
+        if e.response['Error']['Code'] == '404':
+            pass
+        else:
+            if print_output:
+                print(f"\t Error checking S3 for {title}: {str(e)}")
+        return False
+
+
 def queue_gazettes_download(year):
     gazettes = list_gazettes(year)
     for title, link in gazettes:
-        message = dict(link=link,year=year, title=title)
+        if gazette_is_downloaded(year, title, print_output=True):
+            continue
+        message = dict(link=link, year=year, title=title)
         try:
             # Send the message to the SQS queue
             response = sqs_client.send_message(
@@ -53,22 +71,12 @@ def queue_gazettes_download(year):
             print(f"Error queueing gazette download: {str(e)}")
 
 
-def download_gazette(link,year, title):
+def download_gazette(link, year, title):
     s3_key = f"{year}/{title}.pdf"
 
     # Check if the file already exists in S3
-    try:
-        s3_client.head_object(Bucket=S3_BUCKET_NAME, Key=s3_key)
-        print(f"\t Skipped {title}. Already exists in S3.")
+    if gazette_is_downloaded(year, title, print_output=True) == True:
         return s3_key
-    except ClientError as e:
-        if e.response['Error']['Code'] == '404':
-            # The file doesn't exist in S3, proceed with download
-            pass
-        else:
-            # Something else has gone wrong
-            print(f"\t Error checking S3 for {title}: {str(e)}")
-            return None
 
     url = f"https://new.kenyalaw.org{link}/source.pdf"
 
@@ -82,5 +90,3 @@ def download_gazette(link,year, title):
             print(f"\t Failed to upload {title} to S3: {str(e)}")
     else:
         print(f"\t Failed to download {title}. Status code: {response.status_code}")
-
-
