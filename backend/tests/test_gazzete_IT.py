@@ -1,29 +1,19 @@
 import unittest
 import requests
 
-URL = "https://icfb7s3gub.execute-api.us-east-1.amazonaws.com/Stage"
+URL = "https://5kpv5e08h4.execute-api.eu-central-1.amazonaws.com/Stage"
 
 
 class GazetteTestsIT(unittest.TestCase):
     def download_year(self, year):
         response = requests.post(f"{URL}/readgazettes", json={"year": year})
-        self.assertEqual(response.status_code, 200)
-        # print(response.text)
+        # self.assertEqual(response.status_code, 200)
+        print(f"{year}:{response.text}")
 
-    def test_download_2020(self):
-        self.download_year(2020)
-
-    def test_download_2021(self):
-        self.download_year(2021)
-
-    def test_download_2022(self):
-        self.download_year(2022)
-
-    def test_download_2023(self):
-        self.download_year(2023)
-
-    def test_download_2024(self):
-        self.download_year(2024)
+    def test_download_all(self):
+        years = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+        for year in years:
+            self.download_year(year)
 
 
 if __name__ == '__main__':

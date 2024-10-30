@@ -68,7 +68,7 @@ Resources:
   GazettesBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub ${AWS::StackName}-gazettesb-${AWS::AccountId}
+      BucketName: !Sub ${AWS::StackName}
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:

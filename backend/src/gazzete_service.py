@@ -21,7 +21,7 @@ def list_gazettes(year):
     # print(f"Hitting URL: {url}")
     response = requests.get(url)
     if response.status_code == 200:
-        print(f"Response status 200. Legnth = {len(response.content)}")
+        # print(f"Response status 200. Length = {len(response.content)}")
         soup = BeautifulSoup(response.content, 'html.parser')
         elements = soup.select('#doc-table')
         results = []
@@ -43,8 +43,8 @@ def gazette_is_downloaded(year, title, print_output=False):
     s3_key = f"{year}/{title}.pdf"
     try:
         s3_client.head_object(Bucket=S3_BUCKET_NAME, Key=s3_key)
-        if print_output:
-            print(f"Skipped {title}. Already exists in S3.")
+        # if print_output:
+        #     print(f"Skipped {title}. Already exists in S3.")
         return True
     except ClientError as e:
         if e.response['Error']['Code'] == '404':
