@@ -22,7 +22,7 @@ class GazetteTestsIT(unittest.TestCase):
     def test_download_2023(self):
         self.download_year(2023)
 
-    def test_download_2020(self):
+    def test_download_2024(self):
         self.download_year(2024)
 
 
