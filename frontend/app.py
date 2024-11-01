@@ -1,5 +1,4 @@
 import json
-import os
 from pprint import pprint
 
 import boto3
@@ -14,21 +13,14 @@ st.set_page_config(
 
 
 def get_credentials():
-    # Create a session using the EC2 instance's IAM role
-    session = boto3.Session()
-
-    # Get the credentials from the session
-    credentials = session.get_credentials()
-    pprint(credentials)
-    # Freeze the credentials so they can be accessed
-    frozen_credentials = credentials.get_frozen_credentials()
-
-
+    aws_access_key_id = 'ASIA4MTWMIH7NS4HQY3H'
+    aws_secret_access_key = 'D3k2Y3RyOKa7LmRPgNy4lRC06sTIZkM4gb3RWSHn'
+    aws_session_token = 'IQoJb3JpZ2luX2VjEDAaCXVzLWVhc3QtMSJHMEUCIHjHflgxRhgcKCyPrHwqOvYZHyPf0oYlghadSGrLowiXAiEA93Ew2EV1SQhhJPYfNcoXCda6rAn95rMfWS+xJTKxrmQq+gIIqf//////////ARAAGgw4NTE3MjU1MzM2OTQiDCXzyecMt1uV5tNxCirOAtqXMThCPK0qGu7l9S84EVD30gbwkNr2GSOyIgQFKgwb17LYBNnC9IA/LzcKyQtA7Vwy+zadCVsHR7dgEGTMj1+g8+Dizw8mNeHve+sLmNsPMuN2vlGQ8USg/nDHChM8Q5j0yC2CG0HpfdCT1JUTgxNmESQSaLmuOtnEQhviq81kqVeJ9WHr9iCJ/kjXpgajOClqAJc9NqOKtwdoCcVELMg9Qx3vuK5IuiF798JsWIgB3cBonHv1abiE5nRqeX5uXgdb00TH1mWPcTEMZysujTGecaF4l4TAN3CxfdwN/jgrvPnvy9QQL4uFg/JUnRAYpKAzmwaPmxEs5eF33rLqIhzYvsQnIUncp15wAef+Y+hg3jh2rFiI856Xi5fD6zabgdzgxPAMOVgLL4UDa+ov194kA5JR2ydj2pzDQdHZCkgda6siNRI+Qv8HWue026IwuOWTuQY6pwGnXIccsm5Z5MM8kKuRtIK+beb9C1GOTdBLOL3fYgF0KGnkxl9/fn/R/DGcV439wgGhYL+nrQ6YEAC+W7sWtyPQorpwWiSrfl5WUkiaBPiRjvYRE5RxwloTZV05h+X43rHwCobgJF3Pysh15+iJ1pq3DMJTrDBBSp418Hjv6h/+Hy43NbolE26okuJI+aPGYCBfppS3lsj9CP5vyzxW4pztUNAmGlHkzA=='
     return {
-        'aws_access_key_id': frozen_credentials.access_key,
-        'aws_secret_access_key': frozen_credentials.secret_key,
-        'aws_session_token': frozen_credentials.token,
-        'region_name': session.region_name
+        'aws_access_key_id': aws_access_key_id,
+        'aws_secret_access_key': aws_secret_access_key,
+        'aws_session_token': aws_session_token,
+        'region_name': "eu-central-1"
     }
 
 
@@ -101,8 +93,8 @@ def main():
 
     display_agent_overview()
     display_usage_instructions()
-    credentials = get_credentials()
-    bedrock_client = boto3.client('bedrock-agent-runtime', **credentials)
+    # credentials = get_credentials()
+    bedrock_client = boto3.client('bedrock-agent-runtime',region_name= "eu-central-1")
 
     user_input = st.text_input("Enter your question about Kenyan law gazette notices")
 
