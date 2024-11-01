@@ -19,9 +19,10 @@ def get_credentials():
 
     # Get the credentials from the session
     credentials = session.get_credentials()
-
+    pprint(credentials)
     # Freeze the credentials so they can be accessed
     frozen_credentials = credentials.get_frozen_credentials()
+
 
     return {
         'aws_access_key_id': frozen_credentials.access_key,
