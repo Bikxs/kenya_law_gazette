@@ -68,7 +68,7 @@ def queue_gazettes_download(year):
                 QueueUrl=QUEUE_URL,
                 MessageBody=json.dumps(message)
             )
-            print(f"Queued gazette {title}/{year} for download. Message ID: {response['MessageId']}")
+            print(f"Queued gazette {year}/{title} for download. Message ID: {response['MessageId']}")
         except Exception as e:
             print(f"Error queueing gazette download: {str(e)}")
 

@@ -1,4 +1,6 @@
 import unittest
+from pprint import pprint
+
 import requests
 
 URL = "https://5kpv5e08h4.execute-api.eu-central-1.amazonaws.com/Stage"
@@ -11,7 +13,8 @@ class GazetteTestsIT(unittest.TestCase):
         print(f"{year}:{response.text}")
 
     def test_download_all(self):
-        years = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+        years = [x for x in range(2010, 2025)]
+        pprint(years)
         for year in years:
             self.download_year(year)
 
