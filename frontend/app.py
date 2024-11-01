@@ -25,8 +25,7 @@ def get_credentials():
     return {
         'aws_access_key_id': AWS_ACCESS_KEY_ID,
         'aws_secret_access_key': AWS_SECRET_ACCESS_KEY,
-        'region_name': AWS_REGION,
-        'aws_session_token': aws_session_token
+        'region_name': AWS_REGION
     }
 
 
