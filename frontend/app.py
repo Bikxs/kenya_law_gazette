@@ -5,14 +5,6 @@ from pprint import pprint
 import boto3
 import streamlit as st
 
-# aws_access_key_id = "ASIA4MTWMIH7BIWA46AN"
-# aws_secret_access_key = "yR3XdcW+bdk6tF75w6T3DhU+n3N1DIVB8NXL8IFE"
-# aws_session_token = "IQoJb3JpZ2luX2VjEC4aCXVzLWVhc3QtMSJIMEYCIQDmMWEM+bIhydGi6/i6s8cwBjLAYEz+27ENZ+GpLtpptgIhAIb4RkgLIPkmB5V+/g0PjoxPh7qO1f8C4QitVJFKTFAZKvoCCKf//////////wEQABoMODUxNzI1NTMzNjk0IgxD1FnyfPAxz8gTl34qzgJuYFlm71FYaMpJmu96j+kVnajJ89Q+9Lw76PIegw//UMw8i9hfSIs6R7Hq0CJa/LBqNVvuJJ4xGx26h1ln89f1p30cAq8JD7mK+pn2F7+5IIatIkFNZsbSucGjXqCBdCM9/HxkyJiihVbqzPjRjkJc/CcWVoJbT0sbdScXhAxTI2GErQ9oMhZSabnLZrxHMjkcdIlUfYHeaI+fj3fFlX+W/VuqaCg/NorCq5QikryeengdwmwJ5nQXbe+W17wGnmyU7bWk9joLUuEIkLiIbo9HPrErLmKjESv0/oPimCGmya6A0zh8jDyvaz9iCmMRGrf72MQXVL2pQpkMkfdjbZukW+EGwNXzD7HP2tIP6L+g6HqgswSCs4eaal6ez8jZs5Wx01Jd0XjPTKkpP1t2IRArAqdDhaNV0rjEVtjfAXjTTij6QDZaLlfZbP3yrTlfMK+1k7kGOqYBM5EDPvMH8oHvfV5nVYcON2J5K1AdYEBwCX02K6xG7olGFJDmXXPOlFt88/0BtEPcYcxnOxOBNRxCkjSgMIFJOhqzMLsXjV7quDdqM1BPqjagpyU1T6ACVZ/LrYM6yQLUrlsWd5aqaKfWi2ZyDzqK6oyHorHJKMbuG+tsGvXWuhrV35rQ1pG7WJTLLYgbr7wyH/rALo1gtA2fcjuZWmkG+8aRv3CYiQ=="
-
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_REGION = os.environ.get('AWS_REGION', 'eu-central-1')
-
 # Set page config
 st.set_page_config(
     page_title="Kenya Law Gazette Assistant",
@@ -22,10 +14,20 @@ st.set_page_config(
 
 
 def get_credentials():
+    # Create a session using the EC2 instance's IAM role
+    session = boto3.Session()
+
+    # Get the credentials from the session
+    credentials = session.get_credentials()
+
+    # Freeze the credentials so they can be accessed
+    frozen_credentials = credentials.get_frozen_credentials()
+
     return {
-        'aws_access_key_id': AWS_ACCESS_KEY_ID,
-        'aws_secret_access_key': AWS_SECRET_ACCESS_KEY,
-        'region_name': AWS_REGION
+        'aws_access_key_id': frozen_credentials.access_key,
+        'aws_secret_access_key': frozen_credentials.secret_key,
+        'aws_session_token': frozen_credentials.token,
+        'region_name': session.region_name
     }
 
 
